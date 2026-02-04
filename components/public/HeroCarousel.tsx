@@ -5,7 +5,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
 import Image from 'next/image';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
 
 interface EventItem {

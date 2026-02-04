@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { Card } from '@/components/ui/Card';
-import { AspectRatio } from '@/components/ui/AspectRatio';
+import { Card } from '@/components/ui/card';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { motion } from 'framer-motion';
 
 interface EventItem {

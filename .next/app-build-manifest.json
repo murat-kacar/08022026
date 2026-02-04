@@ -1,0 +1,52 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/chunks/app/_not-found/page-7f6a09f2e4056156.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/css/c9eec4e7af400891.css",
+      "static/chunks/231-d2c99c50b5bbebdf.js",
+      "static/chunks/app/layout-01f3584d4fd5e05c.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/css/bc8831281eb208c3.css",
+      "static/chunks/231-d2c99c50b5bbebdf.js",
+      "static/chunks/800-c3d54e54076f6c99.js",
+      "static/chunks/app/page-1a5996a5aaad5ac0.js"
+    ],
+    "/(admin)/dashboard/page": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/chunks/app/(admin)/dashboard/page-0af2fd8c4a4bd83c.js"
+    ],
+    "/(admin)/layout": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/css/3d7271592c492a05.css",
+      "static/chunks/app/(admin)/layout-768b057510218d8f.js"
+    ],
+    "/(admin)/login/page": [
+      "static/chunks/webpack-53761f7881994c98.js",
+      "static/chunks/fd9d1056-844a5cc198651369.js",
+      "static/chunks/23-131937bdce8245d9.js",
+      "static/chunks/main-app-940847dc6e828d4b.js",
+      "static/chunks/app/(admin)/login/page-41f5eac2960c6846.js"
+    ]
+  }
+}

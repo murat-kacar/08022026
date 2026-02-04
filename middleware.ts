@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { verifyToken } from './lib/auth';
+import { verifyToken } from './lib/jwt';
 
 const PROTECTED_PATHS = ['/admin', '/app/api/events', '/app/api/instructors', '/app/api/applications'];
 
