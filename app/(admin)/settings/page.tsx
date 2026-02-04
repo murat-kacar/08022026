@@ -5,6 +5,7 @@ export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     fetch('/api/site-settings')
@@ -37,10 +38,12 @@ export default function AdminSettingsPage() {
     const j = await res.json().catch(() => ({}));
     setLoading(false);
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
-    alert('Kaydedildi');
+    toast?.toast({ title: 'Kaydedildi', description: 'Site ayarları kaydedildi', type: 'success' });
   };
 
   return (

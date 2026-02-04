@@ -5,6 +5,7 @@ export default function AdminInstructorsPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ name: '', expertise: '' });
+  const toast = useToast();
   const [errors, setErrors] = useState<string | null>(null);
 
   const load = async () => {
@@ -27,7 +28,9 @@ export default function AdminInstructorsPage() {
     const res = await fetch('/api/instructors', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     const j = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
     setForm({ name: '', expertise: '' });
@@ -39,7 +42,9 @@ export default function AdminInstructorsPage() {
     const res = await fetch('/api/instructors', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     const j = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
     load();

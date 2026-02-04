@@ -8,6 +8,7 @@ export default function EventEditPage({ params }: { params: { id: string } }) {
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState<any>({ title: '', event_type: '', start_date: '' });
   const [errors, setErrors] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
     fetch(`/api/events/id/${id}`)
@@ -27,9 +28,12 @@ export default function EventEditPage({ params }: { params: { id: string } }) {
     const j = await res.json().catch(() => ({}));
     setLoading(false);
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
+    toast?.toast({ title: 'Güncellendi', description: 'Etkinlik güncellendi', type: 'success' });
     router.push('/admin/events');
   };
 

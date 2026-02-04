@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
+import { useToast } from '@/components/ToastProvider';
 
 type EventItem = any;
 
@@ -7,6 +8,7 @@ export default function AdminEventsPage() {
   const [items, setItems] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ title: '', event_type: '', start_date: '' });
+  const toast = useToast();
 
   const load = async () => {
     setLoading(true);
@@ -37,7 +39,9 @@ export default function AdminEventsPage() {
     const res = await fetch('/api/events', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     const j = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
     setForm({ title: '', event_type: '', start_date: '' });
@@ -49,7 +53,9 @@ export default function AdminEventsPage() {
     const res = await fetch('/api/events', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     const j = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setErrors(j.error || 'Sunucu hatası');
+      const msg = j.error || 'Sunucu hatası';
+      setErrors(msg);
+      toast?.toast({ title: 'Hata', description: msg, type: 'error' });
       return;
     }
     load();
