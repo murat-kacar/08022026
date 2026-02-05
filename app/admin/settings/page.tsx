@@ -23,12 +23,10 @@ export default function AdminSettingsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrors(null);
-    // basic email validation
     if (form.contact_email && !/^[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(form.contact_email)) {
       setErrors('Geçerli bir e-posta adresi girin.');
       return;
     }
-    // basic domain validation (no protocol)
     if (form.canonical_domain && !/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(form.canonical_domain.replace(/^https?:\/\//, '').replace(/\/$/, ''))) {
       setErrors('Geçerli bir domain girin (ör. example.com).');
       return;

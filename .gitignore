@@ -16,4 +16,6 @@ docker-compose.yml
 .dockerignore
 nginx.conf
 public/assets
+tmp/*.txt
+
 /.next

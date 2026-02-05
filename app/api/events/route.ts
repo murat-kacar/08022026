@@ -54,8 +54,8 @@ export async function POST(req: Request) {
     if (body.start_date && isNaN(Date.parse(body.start_date))) return NextResponse.json({ error: 'start_date must be a valid ISO date' }, { status: 400 });
     const slug = body.slug ? body.slug : slugify(body.title || '');
     const res = await query(
-      `INSERT INTO events (title, description, event_type, start_date, end_date, location, poster_image, slug, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,'published') RETURNING *`,
-      [body.title, body.description || null, body.event_type || null, body.start_date || null, body.end_date || null, body.location || null, body.poster_image || null, slug]
+      `INSERT INTO events (title, description, event_type, start_date, end_date, location, poster_image, slug, show_on_homepage, show_in_hero, status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'published') RETURNING *`,
+      [body.title, body.description || null, body.event_type || null, body.start_date || null, body.end_date || null, body.location || null, body.poster_image || null, slug, !!(body as any).show_on_homepage, !!(body as any).show_in_hero]
     );
     return NextResponse.json({ data: res.rows[0] }, { status: 201 });
   } catch (err) {
@@ -76,8 +76,8 @@ export async function PUT(req: Request) {
     const cur = existing.rows[0];
     const slug = body.slug ? body.slug : slugify(body.title || cur.title || '');
     const res = await query(
-      `UPDATE events SET title=$1, description=$2, event_type=$3, start_date=$4, end_date=$5, location=$6, poster_image=$7, slug=$8, updated_at=NOW() WHERE id=$9 RETURNING *`,
-      [body.title || cur.title, body.description ?? cur.description, body.event_type || cur.event_type, body.start_date || cur.start_date, body.end_date || cur.end_date, body.location || cur.location, body.poster_image || cur.poster_image, slug, body.id]
+      `UPDATE events SET title=$1, description=$2, event_type=$3, start_date=$4, end_date=$5, location=$6, poster_image=$7, slug=$8, show_on_homepage=$9, show_in_hero=$10, updated_at=NOW() WHERE id=$11 RETURNING *`,
+      [body.title || cur.title, body.description ?? cur.description, body.event_type || cur.event_type, body.start_date || cur.start_date, body.end_date || cur.end_date, body.location || cur.location, body.poster_image || cur.poster_image, slug, (body as any).show_on_homepage ?? cur.show_on_homepage, (body as any).show_in_hero ?? cur.show_in_hero, body.id]
     );
     return NextResponse.json({ data: res.rows[0] });
   } catch (err) {

@@ -14,11 +14,19 @@ export async function POST(req: Request) {
 
     const user = res.rows[0];
     const ok = await verifyPassword(password, user.password_hash);
-    if (!ok) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!ok) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const token = await signToken({ sub: user.id, username: user.username });
     const resp = NextResponse.json({ success: true });
-    resp.cookies.set('token', token, { httpOnly: true, path: '/', maxAge: 60 * 60 * 24 * 7 });
+    resp.cookies.set('token', token, {
+      httpOnly: true,
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    });
     return resp;
   } catch (err) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

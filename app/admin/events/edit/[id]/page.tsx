@@ -46,6 +46,14 @@ export default function EventEditPage({ params }: { params: { id: string } }) {
           <input value={form.title || ''} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full p-2 border rounded" />
           <input value={form.event_type || ''} onChange={(e) => setForm({ ...form, event_type: e.target.value })} className="w-full p-2 border rounded" />
           <input value={form.start_date ? form.start_date.replace('Z','') : ''} onChange={(e) => setForm({ ...form, start_date: e.target.value })} className="w-full p-2 border rounded" />
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={!!form.show_on_homepage} onChange={(e) => setForm({ ...form, show_on_homepage: e.target.checked })} />
+            <span className="text-sm">Anasayfada göster</span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input type="checkbox" checked={!!form.show_in_hero} onChange={(e) => setForm({ ...form, show_in_hero: e.target.checked })} />
+            <span className="text-sm">Hero alanında göster</span>
+          </label>
           {errors && <div className="text-sm text-red-600">{errors}</div>}
           <div className="flex gap-2">
             <button className="bg-primary text-white px-4 py-2 rounded">Güncelle</button>
