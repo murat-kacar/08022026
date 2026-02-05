@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  hk:
+    image: ghcr.io/murat-kacar/hk:staging
+    restart: unless-stopped
+    env_file: .env.staging
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hk.rule=Host(`${HOSTNAME}`)"
+      - "traefik.http.services.hk.loadbalancer.server.port=3000"
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres_data_staging:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+volumes:
+  postgres_data_staging:

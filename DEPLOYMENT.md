@@ -4,7 +4,38 @@ This document describes a careful, two-stage deployment (staging / production) u
 
 Important: do NOT put secrets in the repo. Use GitHub Secrets and `.env.production` / `.env.staging` files on the server.
 
+- `GHCR_TOKEN` — Personal access token with `write:packages` (used to push images to ghcr.io)
+- `SSH_PRIVATE_KEY` — private key for the `deploy` user on the VPS (add corresponding public key to `/home/deploy/.ssh/authorized_keys`)
+- `VPS_HOST` — server IP or hostname
+- `VPS_USER` — username (e.g., `deploy`)
+- `VPS_PORT` — ssh port (22 default)
+- `REMOTE_APP_DIR` — path on VPS where `docker-compose.prod.yml` lives (e.g., `/home/deploy/apps/hk`)
 Required repo secrets (Settings → Secrets):
+- `GHCR_TOKEN` — Personal access token with `write:packages` (used to push images to ghcr.io)
+- `SSH_PRIVATE_KEY` — private key for the `deploy` user on the VPS (add corresponding public key to `/home/deploy/.ssh/authorized_keys`)
+- `VPS_HOST` — server IP or hostname
+- `VPS_USER` — username (e.g., `deploy`)
+- `VPS_PORT` — ssh port (22 default)
+- `REMOTE_APP_DIR` — path on VPS where `docker-compose.prod.yml` lives (e.g., `/home/deploy/apps/hk`)
+- `REMOTE_APP_DIR_STAGING` — path on VPS where staging compose lives (e.g., `/home/deploy/apps/hk-staging`)
+
+Domains for this project:
+- Production: https://marketpati.com
+- Staging/dev: https://dev.marketpati.com
+
+DNS records you should add (point both to VPS IP):
+- `A` record: `marketpati.com` -> VPS_IP
+- `A` record: `dev.marketpati.com` -> VPS_IP
+
+ENV files on server (do NOT commit to repo):
+- `/home/deploy/apps/hk/.env.production` — production variables including `HOSTNAME=marketpati.com`
+- `/home/deploy/apps/hk-staging/.env.staging` — staging variables including `HOSTNAME=dev.marketpati.com`
+
+When creating `.env.production` and `.env.staging` ensure they contain at minimum:
+- `HOSTNAME` — domain for the compose labels (see above)
+- `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DATABASE_URL`
+- `JWT_SECRET`
+- Any other application-specific env vars
 - `GHCR_TOKEN` — Personal access token with `write:packages` (used to push images to ghcr.io)
 - `SSH_PRIVATE_KEY` — private key for the `deploy` user on the VPS (add corresponding public key to `/home/deploy/.ssh/authorized_keys`)
 - `VPS_HOST` — server IP or hostname

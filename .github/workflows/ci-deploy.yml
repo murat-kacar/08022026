@@ -2,7 +2,7 @@ name: CI & Deploy
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 permissions:
   contents: read
@@ -36,6 +36,7 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/hk:latest
+            ghcr.io/${{ github.repository_owner }}/hk:staging
             ghcr.io/${{ github.repository_owner }}/hk:${{ github.sha }}
 
   deploy:
@@ -47,6 +48,8 @@ jobs:
 
       - name: Deploy to VPS via SSH
         uses: appleboy/ssh-action@v0.1.8
+        env:
+          REMOTE_APP_DIR: ${{ github.ref == 'refs/heads/master' && secrets.REMOTE_APP_DIR || secrets.REMOTE_APP_DIR_STAGING }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
@@ -54,10 +57,16 @@ jobs:
           port: ${{ secrets.VPS_PORT }}
           script: |
             set -e
+            echo "Deploying branch ${GITHUB_REF} to ${REMOTE_APP_DIR}"
             mkdir -p ${REMOTE_APP_DIR}
             cd ${REMOTE_APP_DIR}
-            # pull latest compose file if you keep repo on server, otherwise keep this repo mirrored
-            # update image and restart
+            # Pull appropriate image tag based on branch
+            if [ "${GITHUB_REF}" = "refs/heads/master" ]; then
+              IMAGE_TAG=latest
+            else
+              IMAGE_TAG=staging
+            fi
             docker compose pull hk || true
+            # Update compose to use correct tag if you template it on server, otherwise image tag baked in
             docker compose up -d --remove-orphans
             docker image prune -f
