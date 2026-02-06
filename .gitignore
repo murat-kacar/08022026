@@ -1,19 +1,1 @@
 node_modules
-npm-debug.log
-.next
-.next/*
-.env
-.env.*
-.DS_Store
-*.log
-.vscode
-.idea
-.cache
-coverage
-dist
-# Docker artifacts removed from project
-nginx.conf
-public/assets
-tmp/*.txt
-
-/.next
