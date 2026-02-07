@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { requireAuth } from '@/lib/api-auth';
 
 export async function POST(req: Request) {
   try {
@@ -15,16 +16,38 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ data: res.rows[0] }, { status: 201 });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
-export async function GET() {
-  // For admin use — not exposed publicly in this skeleton
+export async function GET(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
   try {
     const res = await query('SELECT * FROM applications ORDER BY created_at DESC LIMIT 100');
     return NextResponse.json({ data: res.rows });
   } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
+  try {
+    const body = await req.json();
+    const { id, status } = body;
+    if (!id || !status) return NextResponse.json({ error: 'Missing id or status' }, { status: 400 });
+    if (!['pending', 'approved', 'rejected'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+    const res = await query('UPDATE applications SET status=$1 WHERE id=$2 RETURNING *', [status, id]);
+    if (res.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    return NextResponse.json({ data: res.rows[0] });
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

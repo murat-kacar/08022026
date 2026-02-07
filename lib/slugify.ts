@@ -16,5 +16,3 @@ export function slugify(input: string) {
 
   return replaced;
 }
-
-export default slugify;

@@ -1,1 +1,118 @@
-node_modules
+# ========================
+# Dependencies
+# ========================
+node_modules/
+/.pnp
+.pnp.js
+.pnp.cjs
+.yarn/install-state.gz
+
+# ========================
+# Next.js
+# ========================
+/.next/
+/out/
+next-env.d.ts
+
+# ========================
+# Uploaded Media
+# ========================
+/public/uploads/
+
+# ========================
+# Build & Production
+# ========================
+/build/
+/dist/
+*.tsbuildinfo
+
+# ========================
+# Environment & Secrets
+# ========================
+.env
+.env.*
+!.env.example
+
+# ========================
+# Package Manager Locks (sadece package-lock.json kalacak)
+# ========================
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# ========================
+# OS Files
+# ========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# ========================
+# IDE & Editor
+# ========================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.project
+.classpath
+.settings/
+
+# ========================
+# Debug & Logs
+# ========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+*.log
+logs/
+
+# ========================
+# Testing & Coverage
+# ========================
+/coverage/
+*.lcov
+.nyc_output/
+jest-results/
+
+# ========================
+# Vercel
+# ========================
+.vercel
+
+# ========================
+# TypeScript Cache
+# ========================
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# ========================
+# Misc
+# ========================
+*.pid
+*.seed
+*.pid.lock
+*.orig
+.cache/
+.temp/
+.tmp/
+
+# ========================
+# Docker (local dev)
+# ========================
+docker-compose.override.yml
+
+# ========================
+# Database (local dev)
+# ========================
+*.sql
+*.dump
+*.bak

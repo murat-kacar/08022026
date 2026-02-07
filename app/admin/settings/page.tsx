@@ -4,6 +4,7 @@ import { useToast } from '@/components/ToastProvider';
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<string | null>(null);
   const toast = useToast();
@@ -11,9 +12,7 @@ export default function AdminSettingsPage() {
   useEffect(() => {
     fetch('/api/site-settings')
       .then((r) => r.json())
-      .then((data) => {
-        setForm(data.data || {});
-      })
+      .then((data) => { setForm(data.data || {}); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -32,10 +31,10 @@ export default function AdminSettingsPage() {
       return;
     }
 
-    setLoading(true);
+    setSaving(true);
     const res = await fetch('/api/site-settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     const j = await res.json().catch(() => ({}));
-    setLoading(false);
+    setSaving(false);
     if (!res.ok) {
       const msg = j.error || 'Sunucu hatası';
       setErrors(msg);
@@ -45,31 +44,53 @@ export default function AdminSettingsPage() {
     toast?.toast({ title: 'Kaydedildi', description: 'Site ayarları kaydedildi', type: 'success' });
   };
 
+  if (loading) return <div className="admin-loading"><span className="admin-spinner" /> Yükleniyor...</div>;
+
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-4">Site Ayarları</h1>
-      <form onSubmit={handleSubmit} className="space-y-3 max-w-xl">
-        <label className="block">
-          <div className="text-sm font-medium">Site Başlığı</div>
-          <input value={form.site_title || ''} onChange={(e) => handleChange('site_title', e.target.value)} className="w-full p-2 border rounded" />
-        </label>
-        <label className="block">
-          <div className="text-sm font-medium">Site Açıklaması</div>
-          <textarea value={form.site_description || ''} onChange={(e) => handleChange('site_description', e.target.value)} className="w-full p-2 border rounded" />
-        </label>
-        <label className="block">
-          <div className="text-sm font-medium">İletişim E-posta</div>
-          <input value={form.contact_email || ''} onChange={(e) => handleChange('contact_email', e.target.value)} className="w-full p-2 border rounded" />
-        </label>
-        <label className="block">
-          <div className="text-sm font-medium">Canonical Domain</div>
-          <input value={form.canonical_domain || ''} onChange={(e) => handleChange('canonical_domain', e.target.value)} className="w-full p-2 border rounded" />
-        </label>
-        <div className="flex gap-2">
-          {errors && <div className="text-sm text-red-600 self-center">{errors}</div>}
-          <button type="submit" disabled={loading} className="bg-primary text-white px-4 py-2 rounded">{loading ? 'Kaydediliyor...' : 'Kaydet'}</button>
-        </div>
-      </form>
+      <p style={{ fontSize: '0.8rem', color: '#64748b', marginBottom: '1.25rem' }}>
+        Sitenin genel ayarlarını buradan yönetebilirsiniz.
+      </p>
+
+      <div className="admin-card" style={{ maxWidth: 640 }}>
+        <form onSubmit={handleSubmit}>
+          {/* Genel */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1e293b', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e2e8f0' }}>Genel</h3>
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              <div>
+                <label className="admin-label">Site Başlığı</label>
+                <input className="admin-input" value={form.site_title || ''} onChange={(e) => handleChange('site_title', e.target.value)} />
+              </div>
+              <div>
+                <label className="admin-label">Site Açıklaması</label>
+                <textarea className="admin-textarea" value={form.site_description || ''} onChange={(e) => handleChange('site_description', e.target.value)} rows={3} />
+              </div>
+            </div>
+          </div>
+
+          {/* İletişim & Domain */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h3 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1e293b', marginBottom: '0.75rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e2e8f0' }}>İletişim & Domain</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div>
+                <label className="admin-label">İletişim E-posta</label>
+                <input className="admin-input" type="email" placeholder="ornek@domain.com" value={form.contact_email || ''} onChange={(e) => handleChange('contact_email', e.target.value)} />
+              </div>
+              <div>
+                <label className="admin-label">Canonical Domain</label>
+                <input className="admin-input" placeholder="example.com" value={form.canonical_domain || ''} onChange={(e) => handleChange('canonical_domain', e.target.value)} />
+              </div>
+            </div>
+          </div>
+
+          {errors && <div className="admin-error" style={{ marginBottom: '1rem' }}>{errors}</div>}
+
+          <button type="submit" disabled={saving} className="admin-btn admin-btn-primary">
+            {saving ? 'Kaydediliyor...' : 'Ayarları Kaydet'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

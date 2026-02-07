@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { slugify } from '@/lib/slugify';
-
-export const runtime = 'nodejs';
+import { requireAuth } from '@/lib/api-auth';
 
 type InstructorBody = {
   id?: number;
@@ -33,6 +32,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
   try {
     const body: InstructorBody = await req.json();
     if (!body.name || body.name.trim().length < 3) return NextResponse.json({ error: 'Name is required and must be at least 3 characters' }, { status: 400 });
@@ -49,14 +50,19 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
   try {
     const body: InstructorBody = await req.json();
     if (!body.id) return NextResponse.json({ error: 'Missing id' }, { status: 400 });
     if (body.name && body.name.trim().length < 3) return NextResponse.json({ error: 'Name must be at least 3 characters' }, { status: 400 });
-    const slug = body.slug ? body.slug : slugify(body.name || '');
+    const existing = await query('SELECT * FROM instructors WHERE id=$1 LIMIT 1', [body.id]);
+    if (existing.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    const cur = existing.rows[0];
+    const slug = body.slug ? body.slug : slugify(body.name || cur.name || '');
     const res = await query(
       `UPDATE instructors SET name=$1, bio=$2, photo=$3, expertise=$4, slug=$5, display_order=$6 WHERE id=$7 RETURNING *`,
-      [body.name, body.bio || null, body.photo || null, body.expertise || null, slug, body.display_order || 999, body.id]
+      [body.name || cur.name, body.bio ?? cur.bio, body.photo ?? cur.photo, body.expertise ?? cur.expertise, slug, body.display_order ?? cur.display_order, body.id]
     );
     return NextResponse.json({ data: res.rows[0] });
   } catch (err) {
@@ -66,6 +72,8 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
   try {
     const body = await req.json();
     const id = body.id;
@@ -73,6 +81,7 @@ export async function DELETE(req: Request) {
     await query('DELETE FROM instructors WHERE id=$1', [id]);
     return NextResponse.json({ success: true });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

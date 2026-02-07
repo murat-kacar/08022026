@@ -1,0 +1,14 @@
+{
+  "name": "HK Akademi",
+  "forwardPorts": [3000, 5433],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js Dev Server",
+      "onAutoForward": "openBrowser"
+    },
+    "5433": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    }
+  }
+}

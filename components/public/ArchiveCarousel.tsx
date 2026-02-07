@@ -19,19 +19,19 @@ export default function ArchiveCarousel() {
 
   useEffect(() => {
     let mounted = true;
-    fetch('/api/events?homepage=true&limit=10')
+    fetch('/api/events?archive=true&limit=10')
       .then((r) => r.json())
       .then((data) => {
         if (!mounted) return;
         setItems(data?.data || []);
       })
-      .catch(() => {});
+      .catch((err) => console.error('[ArchiveCarousel]', err));
     return () => {
       mounted = false;
     };
   }, []);
 
-  if (items.length === 0) return <div className="text-sm text-muted">Arşivde gösterilecek etkinlik yok.</div>;
+  if (items.length === 0) return <div className="text-sm text-muted-foreground">Arşivde gösterilecek etkinlik yok.</div>;
 
   return (
     <section>
@@ -41,7 +41,7 @@ export default function ArchiveCarousel() {
             <motion.div whileHover={{ scale: 1.03 }}>
               <Card>
                 <AspectRatio ratio={2 / 3}>
-                  <Image src={it.poster_image || '/assets/images/placeholder.jpg'} alt={it.title} fill className="object-cover" />
+                  <Image src={it.poster_image || '/assets/images/placeholder.jpg'} alt={it.title} fill sizes="160px" className="object-cover" />
                 </AspectRatio>
                 <div className="p-2 text-sm font-medium">{it.title}</div>
               </Card>

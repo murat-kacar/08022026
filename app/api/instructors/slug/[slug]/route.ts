@@ -8,6 +8,7 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     if (res.rows.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     return NextResponse.json({ data: res.rows[0] });
   } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

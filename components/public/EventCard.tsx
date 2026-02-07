@@ -1,41 +1,52 @@
-"use client";
 import React from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { motion } from 'framer-motion';
 
 interface Props {
   slug: string;
   title: string;
-  poster_image?: string;
-  event_type?: string;
-  start_date?: string;
-  location?: string;
+  poster_image?: string | null;
+  event_type?: string | null;
+  start_date?: string | null;
+  location?: string | null;
 }
 
-export function EventCard({ slug, title, poster_image = '/assets/images/placeholder.jpg', event_type, start_date, location }: Props) {
+const typeLabels: Record<string, string> = {
+  workshop: 'Atölye',
+  seminar: 'Seminer',
+  conference: 'Konferans',
+  exhibition: 'Sergi',
+  concert: 'Konser',
+  other: 'Diğer',
+};
+
+export default function EventCard({ slug, title, poster_image, event_type, start_date, location }: Props) {
+  const dateStr = start_date ? new Date(start_date).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+
   return (
-    <Link href={`/etkinlikler/${slug}`} className="block">
-      <motion.div whileHover={{ scale: 1.02 }}>
-        <div className="cursor-pointer">
-          <Card>
-          <AspectRatio ratio={2 / 3}>
-            <Image src={poster_image} alt={title} fill className="object-cover" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" />
-            {event_type && <Badge className="absolute top-2 right-2 bg-black/70 text-white">{event_type}</Badge>}
-          </AspectRatio>
-          <CardContent>
-            <h3 className="font-semibold text-lg line-clamp-2">{title}</h3>
-            <p className="text-sm text-muted-foreground">{start_date}</p>
-            {location && <p className="text-sm text-muted-foreground">{location}</p>}
-          </CardContent>
-          </Card>
+    <Link href={`/etkinlikler/${slug}`} className="group block border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+      <div className="relative h-44 bg-gray-100">
+        <Image
+          src={poster_image || '/assets/images/placeholder.jpg'}
+          alt={title}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-300"
+        />
+        {event_type && (
+          <Badge className="absolute top-2 left-2" variant="secondary">
+            {typeLabels[event_type] || event_type}
+          </Badge>
+        )}
+      </div>
+      <div className="p-3">
+        <h3 className="font-semibold line-clamp-2 group-hover:text-primary transition-colors">{title}</h3>
+        <div className="mt-1 flex flex-col gap-0.5 text-sm text-muted-foreground">
+          {dateStr && <span>{dateStr}</span>}
+          {location && <span>{location}</span>}
         </div>
-      </motion.div>
+      </div>
     </Link>
   );
 }
-
-export default EventCard;

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
-
-export const runtime = 'nodejs';
+import { requireAuth } from '@/lib/api-auth';
 
 export async function GET() {
   try {
@@ -16,6 +15,8 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  const authError = await requireAuth(req);
+  if (authError) return authError;
   try {
     const body = await req.json();
     // body expected: { key: value, ... }
