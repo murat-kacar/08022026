@@ -19,6 +19,12 @@ COPY . .
 # Build-time env (not secret, needed for Next.js build)
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Accept important build-time env vars so `npm run build` can run inside the image
+ARG DATABASE_URL
+ARG JWT_SECRET
+ENV DATABASE_URL=${DATABASE_URL}
+ENV JWT_SECRET=${JWT_SECRET}
+
 RUN npm run build
 
 # ---- Stage 3: Production Runner ----
