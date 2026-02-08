@@ -1,0 +1,48 @@
+name: Promote (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target environment: dev or prod-final'
+        required: true
+        default: 'dev'
+      image_tag:
+        description: 'Image tag to deploy (default: latest)'
+        required: false
+        default: 'latest'
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.target }}
+    steps:
+      - name: Deploy to dev
+        if: ${{ github.event.inputs.target == 'dev' }}
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: ${{ secrets.DEV_SSH_PORT }}
+          script: |
+            IMAGE=ghcr.io/${{ github.repository_owner }}/hk:${{ github.event.inputs.image_tag }}
+            docker pull $IMAGE
+            docker stop hk_app || true
+            docker rm hk_app || true
+            docker run -d --restart unless-stopped --name hk_app -p 80:300 $IMAGE
+
+      - name: Deploy to prod-final
+        if: ${{ github.event.inputs.target == 'prod-final' }}
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.PROD_FINAL_HOST }}
+          username: ${{ secrets.PROD_FINAL_USER }}
+          key: ${{ secrets.PROD_FINAL_SSH_KEY }}
+          port: ${{ secrets.PROD_FINAL_SSH_PORT }}
+          script: |
+            IMAGE=ghcr.io/${{ github.repository_owner }}/hk:${{ github.event.inputs.image_tag }}
+            docker pull $IMAGE
+            docker stop hk_app || true
+            docker rm hk_app || true
+            docker run -d --restart unless-stopped --name hk_app -p 80:300 $IMAGE
