@@ -7,8 +7,9 @@ import type { Metadata } from 'next';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const res = await query('SELECT name FROM instructors WHERE slug=$1 LIMIT 1', [params.slug]);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const res = await query('SELECT name FROM instructors WHERE slug=$1 LIMIT 1', [slug]);
   const row = res.rows[0];
   return { title: row ? `${row.name} - Hakan Karsak Akademi` : 'Eğitmen' };
 }
@@ -21,9 +22,10 @@ interface EventRow {
   event_type: string | null;
 }
 
-export default async function InstructorDetailPage({ params }: { params: { slug: string } }) {
+export default async function InstructorDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   try {
-    const res = await query('SELECT * FROM instructors WHERE slug=$1 LIMIT 1', [params.slug]);
+    const res = await query('SELECT * FROM instructors WHERE slug=$1 LIMIT 1', [slug]);
     const instructor = res.rows[0];
     if (!instructor) return notFound();
 

@@ -9,12 +9,12 @@ import AdminShell from './AdminShell';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   // Check if this is the login page — skip auth
-  const headersList = headers();
+  const headersList = await headers();
   const url = headersList.get('x-invoke-path') || headersList.get('x-nextjs-page') || '';
   const referer = headersList.get('referer') || '';
 
   // For login page, render children without auth shell
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
   // If no token and it might be login page, render plain

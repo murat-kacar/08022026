@@ -9,8 +9,9 @@ import ApplicationForm from '@/components/public/ApplicationForm';
 
 export const dynamic = 'force-dynamic';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const res = await query('SELECT title FROM events WHERE slug=$1 LIMIT 1', [params.slug]);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const res = await query('SELECT title FROM events WHERE slug=$1 LIMIT 1', [slug]);
   const row = res.rows[0];
   return { title: row ? `${row.title} - Hakan Karsak Akademi` : 'Etkinlik' };
 }
@@ -23,8 +24,8 @@ interface InstructorRow {
   expertise: string | null;
 }
 
-export default async function EventDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function EventDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   try {
     const res = await query("SELECT * FROM events WHERE slug=$1 AND status != 'deleted' LIMIT 1", [slug]);
     const row = res.rows[0];

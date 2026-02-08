@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { use, useEffect, useState, useCallback } from 'react';
 import { useToast } from '@/components/ToastProvider';
 import { useRouter } from 'next/navigation';
 import MediaManager from '@/components/admin/MediaManager';
 
-export default function InstructorEditPage({ params }: { params: { id: string } }) {
-  const id = params.id;
+export default function InstructorEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
